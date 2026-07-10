@@ -5,14 +5,17 @@ import pickle
 
 @st.cache_resource
 def load_resources():
-    model = tf.keras.models.load_model('customer_churn_model.h5')
-    return model, None
+    model = tf.keras.models.load_model("customer_churn_model.h5")
 
-model, scaler = load_resources()
+    with open("encoder.pkl", "rb") as f:
+        encoder = pickle.load(f)
 
-st.set_page_config(page_title="Customer Churn Prediction", page_icon="📊", layout="centered")
-st.title("📊 Customer Churn Prediction App")
+    with open("scaler.pkl", "rb") as f:
+        scaler = pickle.load(f)
 
+    return model, encoder, scaler
+
+model, encoder, scaler = load_resources()
 col1, col2 = st.columns(2)
 with col1:
     credit_score = st.number_input("Credit Score", min_value=300, max_value=850, value=600)
