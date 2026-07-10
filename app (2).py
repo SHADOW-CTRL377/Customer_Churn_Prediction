@@ -16,7 +16,6 @@ def load_resources():
     return model, encoder, scaler
 
 model, encoder, scaler = load_resources()
-col1, col2 = st.columns(2)
 with col1:
     credit_score = st.number_input("Credit Score", min_value=300, max_value=850, value=600)
     age = st.number_input("Age", min_value=18, max_value=100, value=40)
