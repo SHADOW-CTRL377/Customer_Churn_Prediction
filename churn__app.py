@@ -17,13 +17,19 @@ Is_active_member = st.selectbox("Is Active Member", ("Yes", "No"))
 
 Estimated_salary = st.number_input("Estimated Salary", min_value=0.0, value=50000.0)
 
-# Convert text to numbers
-geo_map = {"France": 0, "Germany": 1, "Spain": 2}
+# Mappings
 gender_map = {"Male": 1, "Female": 0}
 card_map = {"Yes": 1, "No": 0}
 active_map = {"Yes": 1, "No": 0}
 
-# Load model with caching for efficiency
+# One-hot encoding for Geography (3 features)
+geo_one_hot = {
+    "France": [1, 0, 0],
+    "Germany": [0, 1, 0],
+    "Spain": [0, 0, 1]
+}
+
+# Load model with caching
 @st.cache_resource
 def load_model():
     return tf.keras.models.load_model("churn_class.h5")
@@ -36,27 +42,31 @@ except Exception as e:
 
 if st.button("Predict"):
     try:
-        # Create input array as float32 with correct shape
-        input_data = np.array([[CS,
-                                Age,
-                                Tenure,
-                                Balance,
-                                NumOfProducts,
-                                geo_map[geography],
-                                gender_map[gender],
-                                card_map[Has_credit_card],
-                                active_map[Is_active_member],
-                                Estimated_salary]], dtype=np.float32)
+        # Create input array with 12 features: [CS, Age, Tenure, Balance, NumOfProducts, 
+        # Gender, HasCreditCard, IsActiveMember, EstimatedSalary, Geo_France, Geo_Germany, Geo_Spain]
+        input_data = np.array([[
+            CS,
+            Age,
+            Tenure,
+            Balance,
+            NumOfProducts,
+            gender_map[gender],
+            card_map[Has_credit_card],
+            active_map[Is_active_member],
+            Estimated_salary,
+            geo_one_hot[geography][0],  # France
+            geo_one_hot[geography][1],  # Germany
+            geo_one_hot[geography][2]   # Spain
+        ]], dtype=np.float32)
 
         prediction = model.predict(input_data, verbose=0)
 
-        st.write("Prediction Value:", f"{prediction[0][0]:.4f}")
+        st.write(f"Prediction Score: {prediction[0][0]:.4f}")
 
         if prediction[0][0] > 0.5:
-            st.error("⚠️ Customer will likely CHURN")
+            st.error("⚠️ Customer will likely **CHURN**")
         else:
-            st.success("✅ Customer will NOT churn")
+            st.success("✅ Customer will **NOT CHURN**")
     
     except Exception as e:
         st.error(f"Prediction error: {e}")
-        st.info("Please check that all input values are valid and within expected ranges.")
