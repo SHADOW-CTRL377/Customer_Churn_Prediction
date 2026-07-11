@@ -16,7 +16,7 @@ Is_active_member= st.selectbox("Is Active Member",("Yes","No"))
 Estimated_salary= st.number_input("Estimated Salary")
 model = tf.keras.models.load_model("churn_class.h5")
 if st.button("Predict"):
-  if st.write(model.predict(np.array([[CS,Age,Tenure,Balance,NumOfProducts,geography,gender,Has_credit_card,Is_active_member,Estimated_salary]])))>0.5
+  if st.write(model.predict(np.array([[CS,Age,Tenure,Balance,NumOfProducts,geography,gender,Has_credit_card,Is_active_member,Estimated_salary]])))>0.5:
   st.write("Customer will churn")
 else:
   st.write("Customer will not churn")
