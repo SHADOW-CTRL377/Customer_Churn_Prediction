@@ -1,4 +1,7 @@
-numpy
-pandas
-tensorflow
-streamlit
+numpy==1.26.4
+pandas==2.2.2
+scikit-learn==1.5.1
+tensorflow==2.17.1
+streamlit==1.46.1
+joblib==1.4.2
+opencv-python-headless==4.10.0.84
